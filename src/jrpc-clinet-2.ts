@@ -6,6 +6,14 @@ function has(obj: Object, key: string) {
   return Object.prototype.hasOwnProperty.call(obj, key);
 }
 
+function isPlainObject(maybeObject: any): boolean {
+  return (
+    typeof maybeObject === "object" &&
+    maybeObject !== null &&
+    !Array.isArray(maybeObject)
+  );
+}
+
 function toArray<T>(value: T): Unpacked<T>[] {
   // @ts-ignore
   return Array.isArray(value) ? value : [value];
@@ -35,7 +43,7 @@ class Operation {
   private params?: OperationParams;
   private operationPromise: Promise<any>;
   private operationResolve?: (value?: any) => void;
-  private operationReject?: (error?: any) => void;
+  private operationReject?: (error: OperationError) => void;
 
   private constructor() {
     this.operationPromise = new Promise((resolve, reject) => {
@@ -125,6 +133,17 @@ abstract class JrpcProvider {
 type TProviderRequestBody = JrpcProviderRequestBody | JrpcProviderRequestBody[];
 
 function convertRequestOPerationToResponse(operation: JrpcProviderRequestBody) {
+  if (operation.method?.indexOf("error") === 0) {
+    return {
+      jsonrpc: operation.jsonrpc,
+      id: operation.id,
+      error: {
+        code: -123123,
+        message: "hui",
+      },
+    };
+  }
+
   return {
     jsonrpc: operation.jsonrpc,
     id: operation.id,
@@ -150,11 +169,56 @@ class JrpcConsoleProvider extends JrpcProvider {
   }
 }
 
+class JrpcFetchProvider extends JrpcProvider {
+  constructor(private baseUrl: string) {
+    super();
+  }
+
+  async send(operations: TProviderRequestBody) {
+    const request = await fetch(this.baseUrl, {
+      method: "POST",
+      body: JSON.stringify(operations),
+    });
+
+    return request.json();
+  }
+}
+
+type TypeOperationError = { code: number; message: string } | string;
+
+interface IOperationError extends Error {
+  code?: number;
+}
+
+class OperationError extends Error implements IOperationError {
+  public code: IOperationError["code"];
+}
+
+function castOperationerrorToError(error: TypeOperationError): OperationError {
+  if (typeof error === "string") {
+    return new OperationError(error);
+  }
+  if (isPlainObject(error)) {
+    const err = new OperationError(error.message);
+    err.code = error.code;
+    return err;
+  }
+
+  return new OperationError("Operation Error");
+}
+
+function createReturnByResp(resp: IJrpcResponseOperation) {
+  if (has(resp, "error") && resp.error) {
+    return castOperationerrorToError(resp.error);
+  }
+  return resp.result;
+}
+
 interface IJrpcResponseOperation {
   jsonrpc: string;
   //  Work with this typings later
   id?: OperationID;
-  error?: any;
+  error?: TypeOperationError;
   result?: OperationParams;
 }
 
@@ -191,10 +255,10 @@ class JrpcClient {
       [[], {}] as [Array<Operation>, Record<OperationID, Operation>]
     );
 
-    console.log({
-      notifyPromises,
-      methodPromises,
-    });
+    // console.log({
+    //   notifyPromises,
+    //   methodPromises,
+    // });
 
     return this.provider.send(requestBody).then((resp) => {
       notifyPromises.forEach((operation) => {
@@ -215,20 +279,23 @@ class JrpcClient {
         const operation = methodPromises[respItem.id];
 
         if (respItem.error) {
-          operation.reject && operation.reject(respItem.error);
+          operation.reject &&
+            operation.reject(castOperationerrorToError(respItem.error));
         } else {
           operation.resolve && operation.resolve(respItem.result);
         }
       });
 
       if (!isBatch && !Array.isArray(resp)) {
-        if (has(resp, "error")) {
-          return Promise.reject(new Error(`${resp.error}`));
+        if (has(resp, "error") && resp.error) {
+          return Promise.reject(castOperationerrorToError(resp.error));
         }
         return resp.result;
       }
 
-      return Array.isArray(resp) ? resp.map((r) => r.result) : resp.result;
+      return Array.isArray(resp)
+        ? resp.map(createReturnByResp)
+        : createReturnByResp(resp);
     });
   }
 
@@ -277,13 +344,20 @@ const jrpcClient = new JrpcClient(new JrpcConsoleProvider());
 // jrpcClient.notify("call", 123).then(console.log);
 const operationNotify = jrpcClient.createNotify("call", "notify");
 const operationCall1 = jrpcClient.createCall("call", "123");
+const errorOperationCall = jrpcClient.createCall("error:test", "123");
 
 operationNotify.promise.then(console.log);
-operationNotify.promise.then(console.log);
+operationCall1.promise.then(console.log);
+errorOperationCall.promise.catch(console.log);
 
 jrpcClient
   .batch(
-    [operationCall1, jrpcClient.createCall("call", "321"), operationNotify],
+    [
+      operationCall1,
+      jrpcClient.createCall("call", "321"),
+      operationNotify,
+      errorOperationCall,
+    ],
     jrpcClient.createCall("call", "333")
   )
   .then(console.log);
