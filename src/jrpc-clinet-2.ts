@@ -6,6 +6,8 @@ function has(obj: Object, key: string) {
   return Object.prototype.hasOwnProperty.call(obj, key);
 }
 
+function noop() {}
+
 function isPlainObject(maybeObject: any): boolean {
   return (
     typeof maybeObject === "object" &&
@@ -250,6 +252,8 @@ class JrpcClient {
         } else {
           acc[0].push(operation);
         }
+        // Ignore rejected promise
+        operation.promise.catch(noop);
         return acc;
       },
       [[], {}] as [Array<Operation>, Record<OperationID, Operation>]
@@ -346,18 +350,20 @@ const operationNotify = jrpcClient.createNotify("call", "notify");
 const operationCall1 = jrpcClient.createCall("call", "123");
 const errorOperationCall = jrpcClient.createCall("error:test", "123");
 
-operationNotify.promise.then(console.log);
-operationCall1.promise.then(console.log);
+// operationNotify.promise.then(console.log);
+// operationCall1.promise.then(console.log);
 errorOperationCall.promise.catch(console.log);
 
-jrpcClient
-  .batch(
-    [
-      operationCall1,
-      jrpcClient.createCall("call", "321"),
-      operationNotify,
-      errorOperationCall,
-    ],
-    jrpcClient.createCall("call", "333")
-  )
-  .then(console.log);
+jrpcClient.batch(errorOperationCall);
+
+// jrpcClient
+//   .batch(
+//     [
+//       operationCall1,
+//       jrpcClient.createCall("call", "321"),
+//       operationNotify,
+//       errorOperationCall,
+//     ],
+//     jrpcClient.createCall("call", "333")
+//   )
+//   .then(console.log);
