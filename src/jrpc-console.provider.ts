@@ -1,4 +1,4 @@
-import { JrpcProvider } from "./jrpc-base.provider";
+import { JrpcBaseAbstractProvider } from "./jrpc-base.provider";
 import { JrpcProviderRequestBody, TProviderRequestBody } from "./jrpc.types";
 
 function convertRequestOPerationToResponse(operation: JrpcProviderRequestBody) {
@@ -20,7 +20,7 @@ function convertRequestOPerationToResponse(operation: JrpcProviderRequestBody) {
   };
 }
 
-export class JrpcConsoleProvider extends JrpcProvider {
+export class JrpcConsoleProvider extends JrpcBaseAbstractProvider {
   send(operations: TProviderRequestBody) {
     if (Array.isArray(operations)) {
       return Promise.resolve(

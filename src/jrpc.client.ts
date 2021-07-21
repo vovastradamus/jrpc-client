@@ -5,7 +5,7 @@ import {
   noop,
   toArray,
 } from "./helpers";
-import { JrpcProvider } from "./jrpc-base.provider";
+import { JrpcBaseAbstractProvider } from "./jrpc-base.provider";
 import { Operation, OperationError } from "./jrpc-operation";
 import {
   TypeOperationError,
@@ -36,9 +36,9 @@ function createReturnByResp(resp: IJrpcResponseOperation) {
 
 export class JrpcClient {
   private idGenerator;
-  private provider: JrpcProvider;
+  private provider: JrpcBaseAbstractProvider;
 
-  constructor(provider: JrpcProvider) {
+  constructor(provider: JrpcBaseAbstractProvider) {
     this.idGenerator = createIdGenerator();
     this.provider = provider;
   }

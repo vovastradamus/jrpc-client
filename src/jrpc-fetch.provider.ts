@@ -1,7 +1,7 @@
-import { JrpcProvider } from "./jrpc-base.provider";
+import { JrpcBaseAbstractProvider } from "./jrpc-base.provider";
 import { TProviderRequestBody } from "./jrpc.types";
 
-export class JrpcFetchProvider extends JrpcProvider {
+export class JrpcFetchProvider extends JrpcBaseAbstractProvider {
   constructor(private baseUrl: string) {
     super();
   }
