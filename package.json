@@ -1,0 +1,26 @@
+{
+  "name": "@jrpc/client",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./dist/commonjs/index.js",
+  "module": "./dist/es/index.js",
+  "scripts": {
+    "build:es": "tsc --build tsconfig.json",
+    "build:commonjs": "tsc --build tsconfig.commonjs.json",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vovastradamus/jrpc-client.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vovastradamus/jrpc-client/issues"
+  },
+  "homepage": "https://github.com/vovastradamus/jrpc-client#readme",
+  "devDependencies": {
+    "typescript": "^4.3.2"
+  },
+  "dependencies": {}
+}
