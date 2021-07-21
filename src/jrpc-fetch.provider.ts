@@ -1,4 +1,5 @@
 import { JrpcProvider } from "./jrpc-base.provider";
+import { TProviderRequestBody } from "./jrpc.types";
 
 export class JrpcFetchProvider extends JrpcProvider {
   constructor(private baseUrl: string) {

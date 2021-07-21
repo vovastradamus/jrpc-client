@@ -1,5 +1,5 @@
-import { JrpcConsoleProvider } from "./jrpc-console.provider";
-import { JrpcClient } from "./jrpc.client";
+import { JrpcConsoleProvider } from "../src/jrpc-console.provider";
+import { JrpcClient } from "../src/jrpc.client";
 
 const jrpcClient = new JrpcClient(new JrpcConsoleProvider());
 
