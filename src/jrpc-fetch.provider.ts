@@ -10,7 +10,7 @@ export class JrpcFetchProvider extends JrpcBaseAbstractProvider {
     configMerge,
   }: {
     baseUrl: string;
-    configMerge: <T>(config: T) => T;
+    configMerge?: <T>(config: T) => T;
   }) {
     super();
 
