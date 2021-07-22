@@ -1,5 +1,5 @@
 {
-  "name": "@jrpc/client",
+  "name": "jrpc2-client",
   "version": "1.0.0",
   "description": "",
   "main": "./dist/commonjs/index.js",
@@ -13,8 +13,8 @@
     "type": "git",
     "url": "git+https://github.com/vovastradamus/jrpc-client.git"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "vovastradamus",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/vovastradamus/jrpc-client/issues"
   },
