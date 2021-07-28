@@ -32,7 +32,8 @@ export interface IJrpcResponseOperation {
   result?: OperationParams;
 }
 
-export type JrpcServerResponse =
+export type TJrpcServerResponse =
   | IJrpcResponseOperation
   | IJrpcResponseOperation[]
-  | undefined;
+  | undefined
+  | any;

@@ -1,5 +1,9 @@
-import { TProviderRequestBody, JrpcServerResponse } from "./jrpc.types";
+import { TProviderRequestBody, TJrpcServerResponse } from "./jrpc.types";
 
-export abstract class JrpcBaseAbstractProvider {
-  abstract send(operations: TProviderRequestBody): Promise<JrpcServerResponse>;
+export interface IJrpcProvider {
+  send(operations: TProviderRequestBody): Promise<TJrpcServerResponse>;
+}
+
+export abstract class JrpcBaseAbstractProvider implements IJrpcProvider {
+  abstract send(operations: TProviderRequestBody): Promise<TJrpcServerResponse>;
 }

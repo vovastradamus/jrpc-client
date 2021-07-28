@@ -9,6 +9,14 @@ export class OperationError extends Error implements IOperationError {
   public code: IOperationError["code"];
 }
 
+export function createOpertaionError(message: string, code: number) {
+  const err = new OperationError(message);
+
+  err.code = code;
+
+  return err;
+}
+
 export class Operation {
   private id?: OperationID;
   private method?: IOperation["method"];

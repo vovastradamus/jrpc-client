@@ -1,5 +1,5 @@
-import { JrpcConsoleProvider } from "../src/jrpc-console.provider";
-import { JrpcClient } from "../src/jrpc.client";
+import { JrpcClient, TProviderRequestBody, TJrpcServerResponse } from "../src";
+import { JrpcConsoleProvider } from "./jrpc-console.provider";
 
 const jrpcClient = new JrpcClient(new JrpcConsoleProvider());
 
@@ -11,9 +11,9 @@ const errorOperationCall = jrpcClient.createCall("error:test", "123");
 
 // operationNotify.promise.then(console.log);
 // operationCall1.promise.then(console.log);
-errorOperationCall.promise.catch(console.log);
+errorOperationCall.promise.then(console.log);
 
-jrpcClient.batch(errorOperationCall);
+jrpcClient.batch(errorOperationCall).catch(console.error);
 
 // jrpcClient
 //   .batch(

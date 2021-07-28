@@ -5,8 +5,12 @@ import {
   noop,
   toArray,
 } from "./helpers";
-import { JrpcBaseAbstractProvider } from "./jrpc-base.provider";
-import { Operation, OperationError } from "./jrpc-operation";
+import { IJrpcProvider } from "./jrpc-base.provider";
+import {
+  createOpertaionError,
+  Operation,
+  OperationError,
+} from "./jrpc-operation";
 import {
   TypeOperationError,
   IJrpcResponseOperation,
@@ -36,9 +40,9 @@ function createReturnByResp(resp: IJrpcResponseOperation) {
 
 export class JrpcClient {
   private idGenerator;
-  private provider: JrpcBaseAbstractProvider;
+  private provider: IJrpcProvider;
 
-  constructor(provider: JrpcBaseAbstractProvider) {
+  constructor(provider: IJrpcProvider) {
     this.idGenerator = createIdGenerator();
     this.provider = provider;
   }
@@ -64,11 +68,6 @@ export class JrpcClient {
       [[], {}] as [Array<Operation>, Record<OperationID, Operation>]
     );
 
-    // console.log({
-    //   notifyPromises,
-    //   methodPromises,
-    // });
-
     return this.provider.send(requestBody).then((resp) => {
       notifyPromises.forEach((operation) => {
         const notifyResolve = operation.resolve;
@@ -78,7 +77,11 @@ export class JrpcClient {
       });
 
       if (!resp) {
-        return;
+        return Promise.reject(createOpertaionError("Invalid Response", -32000));
+      }
+
+      if (!isPlainObject(resp) && !Array.isArray(resp)) {
+        return Promise.reject(createOpertaionError("Invalid Response", -32000));
       }
 
       toArray(resp).forEach((respItem) => {

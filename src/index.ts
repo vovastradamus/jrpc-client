@@ -1,4 +1,4 @@
 export { JrpcClient } from "./jrpc.client";
 export { JrpcFetchProvider } from "./jrpc-fetch.provider";
-export { JrpcConsoleProvider } from "./jrpc-console.provider";
-export { JrpcBaseAbstractProvider } from "./jrpc-base.provider";
+export { JrpcBaseAbstractProvider, IJrpcProvider } from "./jrpc-base.provider";
+export { TJrpcServerResponse, TProviderRequestBody } from "./jrpc.types";
