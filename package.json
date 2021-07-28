@@ -5,7 +5,7 @@
   "main": "./dist/commonjs/index.js",
   "module": "./dist/es/index.js",
   "scripts": {
-    "build:es": "tsc --build tsconfig.json",
+    "build:es": "tsc --build tsconfig.es.json",
     "build:commonjs": "tsc --build tsconfig.commonjs.json",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
