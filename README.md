@@ -1,11 +1,13 @@
 ## JSON RPC 2.0 Client
 
-Zero dependecy JSON RPC 2.0 client
+Zero dependecy JSON-RPC 2.0 client. With custom data providers, batch call, work with each result of operation as promise
 
 Providers out the box:
 
 - **JrpcFetchProvider** - native fetch
 - **JrpcAxiosProvider** - axios instance
+
+### Example
 
 ```js
 import { JrpcClient, JrpcAxiosProvider } from "jrpc2-client";
