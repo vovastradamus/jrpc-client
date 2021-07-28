@@ -34,8 +34,10 @@ jrpcClient
   .then((results) => null);
 
 // Also can call batch with directly work every operation
-const call1 = jrpcClient.createCall("method1", "value").then((result1) => null);
-const call2 = jrpcClient.createCall("method2", "value").then((result2) => null);
+const call1 = jrpcClient.createCall("method1", "value");
+call1.then((result1) => null);
+const call2 = jrpcClient.createCall("method2", "value");
+call2.then((result2) => null);
 
 jrpcClient.batch(call1, call2);
 ```
