@@ -3,6 +3,7 @@ import {
   IOperation,
   OperationParams,
   IOperationError,
+  TypeOperationError,
 } from "./jrpc.types";
 
 export class OperationError extends Error implements IOperationError {
@@ -48,6 +49,14 @@ export class Operation {
 
   get promise() {
     return this.operationPromise;
+  }
+
+  then(onfullfiled: (result?: any) => any) {
+    return this.promise.then(onfullfiled);
+  }
+
+  catch(onrejected: (error?: TypeOperationError | Error) => any) {
+    return this.promise.catch(onrejected);
   }
 
   get resolve() {
