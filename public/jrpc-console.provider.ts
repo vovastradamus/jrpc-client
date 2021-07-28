@@ -25,21 +25,18 @@ function convertRequestOPerationToResponse(operation: JrpcProviderRequestBody) {
 
 export class JrpcConsoleProvider extends JrpcBaseAbstractProvider {
   send(operations: TProviderRequestBody) {
-    // @ts-ignore
-    return Promise.resolve(null);
+    if (Array.isArray(operations)) {
+      return Promise.resolve(
+        operations.map(convertRequestOPerationToResponse).filter((v) => v.id)
+      );
+    }
 
-    // if (Array.isArray(operations)) {
-    //   return Promise.resolve(
-    //     operations.map(convertRequestOPerationToResponse).filter((v) => v.id)
-    //   );
-    // }
+    const resp = convertRequestOPerationToResponse(operations);
 
-    // const resp = convertRequestOPerationToResponse(operations);
+    if (!resp.id) {
+      return Promise.resolve(undefined);
+    }
 
-    // if (!resp.id) {
-    //   return Promise.resolve(undefined);
-    // }
-
-    // return Promise.resolve(resp);
+    return Promise.resolve(resp);
   }
 }
